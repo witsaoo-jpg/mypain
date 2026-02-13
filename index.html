@@ -2,203 +2,201 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Pain (Assessment Tool)</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Pain Assessment</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#007bff">
     <link rel="apple-touch-icon" href="icon-192.png">
     
     <style>
-        /* สไตล์สำหรับปุ่มตัวเลขข้อ 1 */
-        .pain-scale-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            margin-top: 10px;
+        :root {
+            --primary-color: #007bff;
+            --safe-color: #90ee90;
+            --danger-color: #ff4d4d;
         }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background-color: #eef2f7; 
+            margin: 0; 
+            padding: 10px; 
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .app-container { 
+            max-width: 600px; 
+            margin: auto; 
+            background: #fff; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+        }
+
+        header { 
+            padding: 25px 20px; 
+            text-align: center; 
+            background: var(--primary-color); 
+            color: white; 
+        }
+
+        .top-logo { 
+            width: 80px; height: auto; border-radius: 12px; margin-bottom: 10px; 
+        }
+
+        .name-input { 
+            width: 90%; padding: 12px; border-radius: 25px; border: none; 
+            margin-top: 15px; text-align: center; font-size: 16px;
+            -webkit-user-select: text; user-select: text;
+        }
+
+        .question-card { padding: 20px; border-bottom: 5px solid #f0f0f0; }
+        .question-card label { font-weight: bold; display: block; margin-bottom: 10px; }
+        .img-container img { width: 100%; border-radius: 12px; margin-bottom: 15px; display: block; }
+
+        /* Pain Scale Buttons */
+        .pain-scale-buttons { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
         .pain-btn {
-            width: 40px;
-            height: 40px;
-            border: 2px solid #007bff;
-            background-color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-            color: #007bff;
+            width: 40px; height: 40px; border: 2px solid var(--primary-color);
+            background: white; border-radius: 8px; font-weight: bold; color: var(--primary-color);
+            cursor: pointer; transition: 0.2s;
         }
-        .pain-btn.active {
-            background-color: #007bff;
-            color: white;
+        .pain-btn.active { background: var(--primary-color); color: white; transform: scale(1.1); }
+
+        /* Radio Selection */
+        .radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .radio-group label { 
+            background: #f8f9fa; padding: 12px; border-radius: 12px; border: 1px solid #ddd; 
+            cursor: pointer; text-align: center; transition: 0.2s;
         }
-        
-        /* สไตล์ Footer (เครดิต) */
-        .footer-credit {
-            margin-top: 30px;
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid #ddd;
-            background-color: #f9f9f9;
-            width: 100%;
-        }
-        .fb-link {
-            display: inline-block;
-            margin-top: 10px;
-            color: #1877F2;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .fb-link:hover {
-            text-decoration: underline;
-        }
-        
-        /* ระยะห่างสำหรับกล่องผลลัพธ์ */
-        #resultBox {
-            margin-top: 20px;
-            margin-bottom: 20px;
+        .radio-group input[type="radio"] { display: none; }
+        .radio-group label:has(input:checked) { 
+            background: #e7f1ff; border-color: var(--primary-color); color: var(--primary-color); font-weight: bold; 
         }
 
-        /* --- สไตล์สำหรับโลโก้ด้านบน (เพิ่มใหม่) --- */
-        .top-logo {
-            width: 100px; /* ปรับขนาดโลโก้ตามต้องการ */
-            height: auto;
-            display: block;
-            margin: 0 auto 15px auto; /* จัดกึ่งกลางและเว้นระยะด้านล่าง */
-            border-radius: 10px; /* (ทางเลือก) ทำให้มุมมนเล็กน้อย */
+        .btn-submit { 
+            width: 90%; display: block; margin: 30px auto; padding: 18px; 
+            background: #28a745; color: white; border: none; border-radius: 35px; 
+            font-size: 18px; font-weight: bold; cursor: pointer;
         }
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+
+        .result-section { padding: 20px; text-align: center; display: none; animation: fadeIn 0.5s; }
+        .summary-label { padding: 25px; border-radius: 20px; font-size: 1.1rem; font-weight: bold; margin-top: 15px; line-height: 1.6; }
+        .bg-safe { background-color: var(--safe-color); color: #004d00; }
+        .bg-danger { background-color: var(--danger-color); color: #fff; }
+
+        .footer-credit { padding: 20px; text-align: center; background: #f9f9f9; border-top: 1px solid #eee; font-size: 14px; }
+        .fb-link { color: #1877F2; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 8px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
-
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js')
-          .then(() => console.log('Service Worker Registered'));
-      }
-
-      // ฟังก์ชันสำหรับเลือกคะแนนความปวดข้อ 1
-      function setPainScore(score) {
-          document.getElementById('q1_value').value = score;
-          const buttons = document.querySelectorAll('.pain-btn');
-          buttons.forEach(btn => btn.classList.remove('active'));
-          event.target.classList.add('active');
-      }
-    </script>
 </head>
 <body>
-    <div class="app-container">
-        <header>
-            <img src="logo.jpg" alt="Logo" class="top-logo">
-            
-            <h2>แบบประเมินความปวด</h2>
-            <input type="text" id="userName" placeholder="ระบุชื่อ-นามสกุล ผู้ป่วย" class="name-input">
-        </header>
 
-        <form id="painForm">
-            <div class="question-card">
-                <div class="img-container"><img src="1.jpg" alt="Pain Scale"></div>
-                <label>1. คะแนนปวดโดยเฉลี่ย (0-10):</label>
-                <div class="pain-scale-buttons">
-                    <button type="button" class="pain-btn" onclick="setPainScore(0)">0</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(1)">1</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(2)">2</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(3)">3</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(4)">4</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(5)">5</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(6)">6</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(7)">7</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(8)">8</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(9)">9</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(10)">10</button>
-                </div>
-                <input type="hidden" id="q1_value" value="0">
+<div class="app-container">
+    <header>
+        <img src="logo.jpg" alt="Logo" class="top-logo">
+        <h2 style="margin:0;">แบบประเมินความปวด</h2>
+        <input type="text" id="userName" placeholder="ชื่อ-นามสกุล ผู้ป่วย" class="name-input">
+    </header>
+
+    <form id="painForm">
+        <div class="question-card">
+            <div class="img-container"><img src="1.jpg"></div>
+            <label>1. คะแนนปวดโดยเฉลี่ย (0-10):</label>
+            <div class="pain-scale-buttons">
+                <script>
+                    for(let i=0; i<=10; i++) {
+                        document.write(`<button type="button" class="pain-btn" onclick="setPainScore(${i}, this)">${i}</button>`);
+                    }
+                </script>
             </div>
-
-            <div class="question-card">
-                <div class="img-container"><img src="2.jpg" alt="Activity"></div>
-                <label>2. การทำกิจกรรมใน 3 วันที่ผ่านมา:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="q2" value="0" required> 0 คะแนน</label>
-                    <label><input type="radio" name="q2" value="1"> 1 คะแนน</label>
-                    <label><input type="radio" name="q2" value="2"> 2 คะแนน</label>
-                    <label><input type="radio" name="q2" value="3"> 3 คะแนน</label>
-                </div>
-            </div>
-
-            <div class="question-card">
-                <div class="img-container"><img src="3.jpg" alt="Medicine"></div>
-                <label>3. การรับประทานยาแก้ปวดระหว่างมื้อ:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="q3" value="0" required> 0</label>
-                    <label><input type="radio" name="q3" value="1"> 1</label>
-                    <label><input type="radio" name="q3" value="2"> 2</label>
-                    <label><input type="radio" name="q3" value="3"> 3</label>
-                </div>
-            </div>
-
-            <div class="question-card">
-                <div class="img-container"><img src="4.jpg" alt="Hospital Visit"></div>
-                <label>4. จำนวนครั้งที่มาโรงพยาบาล/โทรปรึกษา:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="q4" value="0" required> 0</label>
-                    <label><input type="radio" name="q4" value="1"> 1</label>
-                    <label><input type="radio" name="q4" value="2"> 2</label>
-                    <label><input type="radio" name="q4" value="3"> 3</label>
-                </div>
-            </div>
-
-            <div class="question-card">
-                <div class="img-container"><img src="5.jpg" alt="Sleep"></div>
-                <label>5. อาการตื่นกลางดึกเพราะปวด:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="q5" value="0" required> 0</label>
-                    <label><input type="radio" name="q5" value="1"> 1</label>
-                    <label><input type="radio" name="q5" value="2"> 2</label>
-                    <label><input type="radio" name="q5" value="3"> 3</label>
-                </div>
-            </div>
-
-            <div class="question-card">
-                <div class="img-container"><img src="6.jpg" alt="Emotion"></div>
-                <label>6. สภาพอารมณ์ใน 3 วันที่ผ่านมา:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="q6" value="0" required> 0</label>
-                    <label><input type="radio" name="q6" value="1"> 1</label>
-                    <label><input type="radio" name="q6" value="2"> 2</label>
-                    <label><input type="radio" name="q6" value="3"> 3</label>
-                </div>
-            </div>
-
-            <div class="question-card">
-                <div class="img-container"><img src="7.jpg" alt="Side Effects"></div>
-                <label>7. อาการข้างเคียงหลังกินยา:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="q7" value="0" required> 0</label>
-                    <label><input type="radio" name="q7" value="1"> 1</label>
-                    <label><input type="radio" name="q7" value="2"> 2</label>
-                    <label><input type="radio" name="q7" value="3"> 3</label>
-                </div>
-            </div>
-
-            <button type="button" class="btn-submit" onclick="processResult()">ประมวลผลการจัดการตนเอง</button>
-        </form>
-
-        <div id="resultBox" class="result-section" style="display:none;">
-            <div class="img-container"><img src="8.jpg" alt="Result Guide"></div>
-            <div id="summaryLabel" class="summary-label"></div>
+            <input type="hidden" id="q1_value" value="">
         </div>
 
-        <footer class="footer-credit">
-            <strong>จัดทำโดย: พว.นิภัสสรณ์ บุญญา (รพ.ชลบุรี)</strong><br>
-            <a href="https://www.facebook.com/people/CBH-Pain-clinic/61572659957823/" target="_blank" class="fb-link">
-                🔵 ติดต่อเรา: CBH Pain clinic
-            </a>
-        </footer>
+        <script>
+            const questions = [
+                "การทำกิจกรรมใน 3 วันที่ผ่านมา",
+                "การรับประทานยาแก้ปวดระหว่างมื้อ",
+                "จำนวนครั้งที่มาโรงพยาบาล/โทรปรึกษา",
+                "อาการตื่นกลางดึกเพราะปวด",
+                "สภาพอารมณ์ใน 3 วันที่ผ่านมา",
+                "อาการข้างเคียงหลังกินยา"
+            ];
+            questions.forEach((q, index) => {
+                let qNum = index + 2;
+                document.write(`
+                    <div class="question-card">
+                        <div class="img-container"><img src="${qNum}.jpg"></div>
+                        <label>${qNum}. ${q}:</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="q${qNum}" value="0"> 0 คะแนน</label>
+                            <label><input type="radio" name="q${qNum}" value="1"> 1 คะแนน</label>
+                            <label><input type="radio" name="q${qNum}" value="2"> 2 คะแนน</label>
+                            <label><input type="radio" name="q${qNum}" value="3"> 3 คะแนน</label>
+                        </div>
+                    </div>
+                `);
+            });
+        </script>
+
+        <button type="button" class="btn-submit" onclick="processResult()">ประมวลผลการจัดการตนเอง</button>
+    </form>
+
+    <div id="resultBox" class="result-section">
+        <div class="img-container"><img src="8.jpg"></div>
+        <div id="summaryLabel" class="summary-label"></div>
     </div>
-    <script src="script.js"></script>
+
+    <footer class="footer-credit">
+        <strong>จัดทำโดย: พว.นิภัสสรณ์ บุญญา (รพ.ชลบุรี)</strong><br>
+        <a href="https://www.facebook.com/people/CBH-Pain-clinic/61572659957823/" target="_blank" class="fb-link">🔵 CBH Pain clinic</a>
+    </footer>
+</div>
+
+<script>
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').then(() => console.log('PWA Ready'));
+    }
+
+    function setPainScore(score, btn) {
+        document.getElementById('q1_value').value = score;
+        document.querySelectorAll('.pain-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function processResult() {
+        const name = document.getElementById('userName').value.trim() || "ผู้ป่วย";
+        let score = 0;
+
+        const q1 = document.getElementById('q1_value').value;
+        if(q1 === "") { alert("กรุณาเลือกคะแนนความปวดข้อ 1"); return; }
+        score += parseInt(q1);
+
+        for (let i = 2; i <= 7; i++) {
+            const sel = document.querySelector(`input[name="q${i}"]:checked`);
+            if (!sel) { alert(`กรุณาตอบข้อ ${i} ให้ครบครับ`); return; }
+            score += parseInt(sel.value);
+        }
+
+        const resBox = document.getElementById('resultBox');
+        const label = document.getElementById('summaryLabel');
+        resBox.style.display = 'block';
+        label.classList.remove('bg-safe', 'bg-danger');
+
+        if (score <= 15) {
+            label.classList.add('bg-safe');
+            label.innerHTML = `คุณ ${name}<br>คะแนน: ${score}<br>✅ ท่านไม่ต้องปรับการกินยาแก้ปวด`;
+        } else {
+            label.classList.add('bg-danger');
+            label.innerHTML = `คุณ ${name}<br>คะแนน: ${score}<br>⚠️ ท่านต้องปรับการกินยาแก้ปวด<br>📞 โทร: <a href="tel:0983261994" style="color:white">098-3261994</a>`;
+        }
+        resBox.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
 </body>
 </html>
