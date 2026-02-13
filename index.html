@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pain Assessment Tool - OYA Data</title>
+    <title>My Pain (Assessment Tool)</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#007bff">
@@ -43,11 +43,6 @@
             background-color: #f9f9f9;
             width: 100%;
         }
-        .footer-logo {
-            width: 80px;
-            height: auto;
-            margin-bottom: 10px;
-        }
         .fb-link {
             display: inline-block;
             margin-top: 10px;
@@ -62,6 +57,19 @@
         /* ระยะห่างสำหรับกล่องผลลัพธ์ */
         #resultBox {
             margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* --- สไตล์สำหรับโลโก้ด้านบน (เพิ่มใหม่) --- */
+        .top-logo {
+            width: 100px; /* ปรับขนาดโลโก้ตามต้องการ */
+            height: auto;
+            display: block;
+            margin: 0 auto 15px auto; /* จัดกึ่งกลางและเว้นระยะด้านล่าง */
+            border-radius: 10px; /* (ทางเลือก) ทำให้มุมมนเล็กน้อย */
+        }
+        header {
+            text-align: center;
             margin-bottom: 20px;
         }
     </style>
@@ -84,6 +92,8 @@
 <body>
     <div class="app-container">
         <header>
+            <img src="logo.jpeg" alt="Logo" class="top-logo">
+            
             <h2>แบบประเมินความปวด</h2>
             <input type="text" id="userName" placeholder="ระบุชื่อ-นามสกุล ผู้ป่วย" class="name-input">
         </header>
@@ -183,7 +193,6 @@
         </div>
 
         <footer class="footer-credit">
-            <img src="logo.jpeg" alt="Logo" class="footer-logo"><br>
             <strong>จัดทำโดย: พว.นิภัสสรณ์ บุญญา (รพ.ชลบุรี)</strong><br>
             <a href="https://www.facebook.com/people/CBH-Pain-clinic/61572659957823/" target="_blank" class="fb-link">
                 🔵 ติดต่อเรา: CBH Pain clinic
