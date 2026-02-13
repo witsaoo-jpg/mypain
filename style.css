@@ -2,24 +2,180 @@
     --primary-color: #007bff;
     --safe-color: #90ee90;
     --danger-color: #ff4d4d;
+    --warning-color: #ffcc00;
 }
 
-body { font-family: 'Sarabun', sans-serif; background-color: #eef2f7; margin: 0; padding: 15px; }
-.app-container { max-width: 600px; margin: auto; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-header { padding: 20px; text-align: center; background: var(--primary-color); color: white; }
-.name-input { width: 80%; padding: 10px; border-radius: 20px; border: none; margin-top: 10px; text-align: center; }
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* ลบสีฟ้าเวลาแตะบนมือถือ */
+}
 
-.question-card { padding: 20px; border-bottom: 5px solid #f0f0f0; }
-.img-container img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
+body { 
+    font-family: 'Sarabun', sans-serif; 
+    background-color: #eef2f7; 
+    margin: 0; 
+    padding: 10px; 
+    /* ป้องกันการคลุมดำเลือกข้อความเพื่อให้เหมือนแอปจริง */
+    -webkit-user-select: none;
+    user-select: none;
+}
 
-.radio-group { display: flex; justify-content: space-around; margin-top: 15px; }
-.radio-group label { background: #f8f9fa; padding: 10px 15px; border-radius: 10px; border: 1px solid #ddd; cursor: pointer; }
+.app-container { 
+    max-width: 600px; 
+    margin: auto; 
+    background: #fff; 
+    border-radius: 20px; 
+    overflow: hidden; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+}
 
-.btn-submit { width: 90%; display: block; margin: 20px auto; padding: 15px; background: #28a745; color: white; border: none; border-radius: 30px; font-size: 18px; font-weight: bold; }
+/* ส่วนหัวแอป */
+header { 
+    padding: 25px 20px; 
+    text-align: center; 
+    background: var(--primary-color); 
+    color: white; 
+}
 
-.result-section { padding: 20px; text-align: center; animation: fadeIn 0.5s; }
-.summary-label { padding: 20px; border-radius: 15px; font-size: 1.2rem; font-weight: bold; margin-top: 15px; }
-.bg-safe { background-color: var(--safe-color); color: #000; }
-.bg-danger { background-color: var(--danger-color); color: #fff; }
+.name-input { 
+    width: 85%; 
+    padding: 12px; 
+    border-radius: 25px; 
+    border: 1px solid rgba(255,255,255,0.3); 
+    margin-top: 15px; 
+    text-align: center; 
+    font-size: 16px;
+    -webkit-user-select: text; /* อนุญาตให้พิมพ์ชื่อได้ */
+    user-select: text;
+}
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* การ์ดคำถาม */
+.question-card { 
+    padding: 20px; 
+    border-bottom: 5px solid #f0f0f0; 
+}
+
+.question-card label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.img-container img { 
+    width: 100%; 
+    border-radius: 12px; 
+    margin-bottom: 15px; 
+    display: block;
+}
+
+/* ปรับแต่งปุ่มเลข 0-10 (Pain Scale) */
+.pain-scale-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.pain-btn {
+    width: 42px;
+    height: 42px;
+    border: 2px solid var(--primary-color);
+    background-color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    color: var(--primary-color);
+}
+
+.pain-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+}
+
+/* Radio buttons สำหรับข้ออื่นๆ */
+.radio-group { 
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* แบ่งเป็น 2 คอลัมน์ให้กดง่ายขึ้น */
+    gap: 10px;
+    margin-top: 15px; 
+}
+
+.radio-group label { 
+    background: #f8f9fa; 
+    padding: 12px; 
+    border-radius: 12px; 
+    border: 1px solid #ddd; 
+    cursor: pointer; 
+    text-align: center;
+    font-weight: normal;
+    transition: 0.2s;
+}
+
+.radio-group input[type="radio"] {
+    display: none; /* ซ่อนวงกลมเดิม */
+}
+
+/* สไตล์เมื่อเลือก Radio */
+.radio-group label:has(input:checked) {
+    background-color: #e7f1ff;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* ปุ่มกดส่ง */
+.btn-submit { 
+    width: 90%; 
+    display: block; 
+    margin: 30px auto; 
+    padding: 18px; 
+    background: #28a745; 
+    color: white; 
+    border: none; 
+    border-radius: 35px; 
+    font-size: 18px; 
+    font-weight: bold; 
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(40,167,69,0.3);
+}
+
+.btn-submit:active {
+    transform: scale(0.98);
+}
+
+/* ส่วนแสดงผลลัพธ์ */
+.result-section { 
+    padding: 20px; 
+    text-align: center; 
+    animation: fadeIn 0.6s ease-out; 
+}
+
+.summary-label { 
+    padding: 25px; 
+    border-radius: 20px; 
+    font-size: 1.25rem; 
+    font-weight: bold; 
+    margin-top: 20px; 
+    line-height: 1.5;
+}
+
+.bg-safe { background-color: var(--safe-color); color: #004d00; border: 2px solid #76d676; }
+.bg-danger { background-color: var(--danger-color); color: #fff; border: 2px solid #cc0000; }
+
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(20px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+/* Footer Credit */
+.footer-credit {
+    font-size: 14px;
+    color: #666;
+    background: #fdfdfd;
+}
