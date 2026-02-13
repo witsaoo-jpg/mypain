@@ -1,0 +1,25 @@
+:root {
+    --primary-color: #007bff;
+    --safe-color: #90ee90;
+    --danger-color: #ff4d4d;
+}
+
+body { font-family: 'Sarabun', sans-serif; background-color: #eef2f7; margin: 0; padding: 15px; }
+.app-container { max-width: 600px; margin: auto; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+header { padding: 20px; text-align: center; background: var(--primary-color); color: white; }
+.name-input { width: 80%; padding: 10px; border-radius: 20px; border: none; margin-top: 10px; text-align: center; }
+
+.question-card { padding: 20px; border-bottom: 5px solid #f0f0f0; }
+.img-container img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
+
+.radio-group { display: flex; justify-content: space-around; margin-top: 15px; }
+.radio-group label { background: #f8f9fa; padding: 10px 15px; border-radius: 10px; border: 1px solid #ddd; cursor: pointer; }
+
+.btn-submit { width: 90%; display: block; margin: 20px auto; padding: 15px; background: #28a745; color: white; border: none; border-radius: 30px; font-size: 18px; font-weight: bold; }
+
+.result-section { padding: 20px; text-align: center; animation: fadeIn 0.5s; }
+.summary-label { padding: 20px; border-radius: 15px; font-size: 1.2rem; font-weight: bold; margin-top: 15px; }
+.bg-safe { background-color: var(--safe-color); color: #000; }
+.bg-danger { background-color: var(--danger-color); color: #fff; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
