@@ -10,195 +10,86 @@
     <link rel="apple-touch-icon" href="icon-192.png">
     
     <style>
-        /* สไตล์สำหรับปุ่มตัวเลขข้อ 1 */
-        .pain-scale-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        .pain-btn {
-            width: 40px;
-            height: 40px;
-            border: 2px solid #007bff;
-            background-color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-            color: #007bff;
-        }
-        .pain-btn.active {
-            background-color: #007bff;
-            color: white;
-        }
-        
-        /* สไตล์ Footer (เครดิต) */
-        .footer-credit {
-            margin-top: 30px;
-            padding: 20px;
-            text-align: center;
-            border-top: 1px solid #ddd;
-            background-color: #f9f9f9;
-            width: 100%;
-        }
-        .fb-link {
-            display: inline-block;
-            margin-top: 10px;
-            color: #1877F2;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .fb-link:hover {
-            text-decoration: underline;
-        }
-        
-        /* ระยะห่างสำหรับกล่องผลลัพธ์ */
-        #resultBox {
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
+        /* ... (สไตล์เดิมของคุณ) ... */
 
-        /* --- สไตล์สำหรับโลโก้ด้านบน (เพิ่มใหม่) --- */
-        .top-logo {
-            width: 100px; /* ปรับขนาดโลโก้ตามต้องการ */
-            height: auto;
-            display: block;
-            margin: 0 auto 15px auto; /* จัดกึ่งกลางและเว้นระยะด้านล่าง */
-            border-radius: 10px; /* (ทางเลือก) ทำให้มุมมนเล็กน้อย */
+        /* สไตล์ปุ่มติดตั้ง */
+        #installBtn {
+            display: none; /* ซ่อนไว้ก่อน */
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin: 10px auto;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-        header {
-            text-align: center;
-            margin-bottom: 20px;
+        #installBtn:hover {
+            background-color: #218838;
         }
     </style>
-
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js')
-          .then(() => console.log('Service Worker Registered'));
-      }
-
-      // ฟังก์ชันสำหรับเลือกคะแนนความปวดข้อ 1
-      function setPainScore(score) {
-          document.getElementById('q1_value').value = score;
-          const buttons = document.querySelectorAll('.pain-btn');
-          buttons.forEach(btn => btn.classList.remove('active'));
-          event.target.classList.add('active');
-      }
-    </script>
 </head>
 <body>
     <div class="app-container">
         <header>
             <img src="logo.jpg" alt="Logo" class="top-logo">
             
+            <button id="installBtn">📲 ติดตั้งแอปไว้บนมือถือ</button>
+            
             <h2>แบบประเมินความปวด</h2>
             <input type="text" id="userName" placeholder="ระบุชื่อ-นามสกุล ผู้ป่วย" class="name-input">
         </header>
 
-        <form id="painForm">
-            <div class="question-card">
-                <div class="img-container"><img src="1.jpg" alt="Pain Scale"></div>
-                <label>1. คะแนนปวดโดยเฉลี่ย (0-10):</label>
-                <div class="pain-scale-buttons">
-                    <button type="button" class="pain-btn" onclick="setPainScore(0)">0</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(1)">1</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(2)">2</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(3)">3</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(4)">4</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(5)">5</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(6)">6</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(7)">7</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(8)">8</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(9)">9</button>
-                    <button type="button" class="pain-btn" onclick="setPainScore(10)">10</button>
-                </div>
-                <input type="hidden" id="q1_value" value="0">
-            </div>
-
-            <div class="question-card">
-                <div class="img-container"><img src="2.jpg" alt="Activity"></div>
-                <label>2. การทำกิจกรรมใน 3 วันที่ผ่านมา:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="q2" value="0" required> 0 คะแนน</label>
-                    <label><input type="radio" name="q2" value="1"> 1 คะแนน</label>
-                    <label><input type="radio" name="q2" value="2"> 2 คะแนน</label>
-                    <label><input type="radio" name="q2" value="3"> 3 คะแนน</label>
-                </div>
-            </div>
-
-            <div class="question-card">
-                <div class="img-container"><img src="3.jpg" alt="Medicine"></div>
-                <label>3. การรับประทานยาแก้ปวดระหว่างมื้อ:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="q3" value="0" required> 0</label>
-                    <label><input type="radio" name="q3" value="1"> 1</label>
-                    <label><input type="radio" name="q3" value="2"> 2</label>
-                    <label><input type="radio" name="q3" value="3"> 3</label>
-                </div>
-            </div>
-
-            <div class="question-card">
-                <div class="img-container"><img src="4.jpg" alt="Hospital Visit"></div>
-                <label>4. จำนวนครั้งที่มาโรงพยาบาล/โทรปรึกษา:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="q4" value="0" required> 0</label>
-                    <label><input type="radio" name="q4" value="1"> 1</label>
-                    <label><input type="radio" name="q4" value="2"> 2</label>
-                    <label><input type="radio" name="q4" value="3"> 3</label>
-                </div>
-            </div>
-
-            <div class="question-card">
-                <div class="img-container"><img src="5.jpg" alt="Sleep"></div>
-                <label>5. อาการตื่นกลางดึกเพราะปวด:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="q5" value="0" required> 0</label>
-                    <label><input type="radio" name="q5" value="1"> 1</label>
-                    <label><input type="radio" name="q5" value="2"> 2</label>
-                    <label><input type="radio" name="q5" value="3"> 3</label>
-                </div>
-            </div>
-
-            <div class="question-card">
-                <div class="img-container"><img src="6.jpg" alt="Emotion"></div>
-                <label>6. สภาพอารมณ์ใน 3 วันที่ผ่านมา:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="q6" value="0" required> 0</label>
-                    <label><input type="radio" name="q6" value="1"> 1</label>
-                    <label><input type="radio" name="q6" value="2"> 2</label>
-                    <label><input type="radio" name="q6" value="3"> 3</label>
-                </div>
-            </div>
-
-            <div class="question-card">
-                <div class="img-container"><img src="7.jpg" alt="Side Effects"></div>
-                <label>7. อาการข้างเคียงหลังกินยา:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="q7" value="0" required> 0</label>
-                    <label><input type="radio" name="q7" value="1"> 1</label>
-                    <label><input type="radio" name="q7" value="2"> 2</label>
-                    <label><input type="radio" name="q7" value="3"> 3</label>
-                </div>
-            </div>
-
-            <button type="button" class="btn-submit" onclick="processResult()">ประมวลผลการจัดการตนเอง</button>
-        </form>
-
-        <div id="resultBox" class="result-section" style="display:none;">
-            <div class="img-container"><img src="8.jpg" alt="Result Guide"></div>
-            <div id="summaryLabel" class="summary-label"></div>
         </div>
 
-        <footer class="footer-credit">
-            <strong>จัดทำโดย: พว.นิภัสสรณ์ บุญญา (รพ.ชลบุรี)</strong><br>
-            <a href="https://www.facebook.com/people/CBH-Pain-clinic/61572659957823/" target="_blank" class="fb-link">
-                🔵 ติดต่อเรา: CBH Pain clinic
-            </a>
-        </footer>
-    </div>
+    <script>
+        // 1. ลงทะเบียน Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('Service Worker Registered'));
+        }
+
+        // 2. โค้ดสำหรับปุ่มติดตั้ง (สำคัญ!)
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // ป้องกันไม่ให้ Chrome แสดงแถบติดตั้งอัตโนมัติ (เราจะทำปุ่มเอง)
+            e.preventDefault();
+            // เก็บ event ไว้ใช้ทีหลัง
+            deferredPrompt = e;
+            // แสดงปุ่มติดตั้งของเรา
+            installBtn.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', (e) => {
+            // ซ่อนปุ่มเมื่อกด
+            installBtn.style.display = 'none';
+            // แสดงหน้าต่างติดตั้งของ Browser
+            deferredPrompt.prompt();
+            // รอดูผลว่าผู้ใช้กดติดตั้งไหม
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the A2HS prompt');
+                } else {
+                    console.log('User dismissed the A2HS prompt');
+                }
+                deferredPrompt = null;
+            });
+        });
+
+        // 3. ฟังก์ชันเดิมของคุณ (รวมไว้ในไฟล์เดียวกันเลยก็ได้)
+        function setPainScore(score) {
+            document.getElementById('q1_value').value = score;
+            const buttons = document.querySelectorAll('.pain-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+    </script>
+    
     <script src="script.js"></script>
 </body>
 </html>
