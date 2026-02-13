@@ -1,10 +1,11 @@
 {
   "name": "Pain Assessment Tool",
-  "short_name": "PainApp",
-  "start_url": "index.html",
+  "short_name": "PainTool",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
+  "description": "แบบประเมินความปวดและการจัดการตนเอง",
   "icons": [
     {
       "src": "icon-192.png",
