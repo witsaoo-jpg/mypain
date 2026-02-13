@@ -1,11 +1,11 @@
 {
-  "name": "Pain Assessment Tool",
-  "short_name": "PainTool",
-  "start_url": "./index.html",
+  "name": "My Pain Assessment Tool",
+  "short_name": "MyPain",
+  "description": "แบบประเมินความปวดและการจัดการตนเอง",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
-  "description": "แบบประเมินความปวดและการจัดการตนเอง - รพ.ชลบุรี",
   "icons": [
     {
       "src": "icon-192.png",
