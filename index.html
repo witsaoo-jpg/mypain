@@ -3,16 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Pain Assessment</title>
+    <title>My Pain Assessment - OYA Data</title>
+    
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#007bff">
     <link rel="apple-touch-icon" href="icon-192.png">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
         :root {
             --primary-color: #007bff;
             --safe-color: #90ee90;
             --danger-color: #ff4d4d;
+            --dark-green: #004d00;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -22,8 +28,6 @@
             background-color: #eef2f7; 
             margin: 0; 
             padding: 10px; 
-            -webkit-user-select: none;
-            user-select: none;
         }
 
         .app-container { 
@@ -42,34 +46,31 @@
             color: white; 
         }
 
-        .top-logo { 
-            width: 80px; height: auto; border-radius: 12px; margin-bottom: 10px; 
-        }
+        .top-logo { width: 80px; height: auto; border-radius: 12px; margin-bottom: 10px; }
 
         .name-input { 
             width: 90%; padding: 12px; border-radius: 25px; border: none; 
             margin-top: 15px; text-align: center; font-size: 16px;
-            -webkit-user-select: text; user-select: text;
         }
 
         .question-card { padding: 20px; border-bottom: 5px solid #f0f0f0; }
-        .question-card label { font-weight: bold; display: block; margin-bottom: 10px; }
+        .question-card label { font-weight: bold; display: block; margin-bottom: 12px; color: #333; }
         .img-container img { width: 100%; border-radius: 12px; margin-bottom: 15px; display: block; }
 
-        /* Pain Scale Buttons */
-        .pain-scale-buttons { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+        /* Pain Scale Buttons 1-10 */
+        .pain-scale-buttons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
         .pain-btn {
-            width: 40px; height: 40px; border: 2px solid var(--primary-color);
-            background: white; border-radius: 8px; font-weight: bold; color: var(--primary-color);
-            cursor: pointer; transition: 0.2s;
+            width: 42px; height: 42px; border: 2px solid var(--primary-color);
+            background: white; border-radius: 10px; font-weight: bold; color: var(--primary-color);
+            cursor: pointer; transition: 0.2s; font-size: 16px;
         }
-        .pain-btn.active { background: var(--primary-color); color: white; transform: scale(1.1); }
+        .pain-btn.active { background: var(--primary-color); color: white; transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,123,255,0.3); }
 
-        /* Radio Selection */
+        /* Radio Buttons */
         .radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .radio-group label { 
-            background: #f8f9fa; padding: 12px; border-radius: 12px; border: 1px solid #ddd; 
-            cursor: pointer; text-align: center; transition: 0.2s;
+            background: #f8f9fa; padding: 14px; border-radius: 12px; border: 1px solid #ddd; 
+            cursor: pointer; text-align: center; transition: 0.2s; font-size: 14px;
         }
         .radio-group input[type="radio"] { display: none; }
         .radio-group label:has(input:checked) { 
@@ -79,16 +80,24 @@
         .btn-submit { 
             width: 90%; display: block; margin: 30px auto; padding: 18px; 
             background: #28a745; color: white; border: none; border-radius: 35px; 
-            font-size: 18px; font-weight: bold; cursor: pointer;
+            font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(40,167,69,0.3);
         }
 
         .result-section { padding: 20px; text-align: center; display: none; animation: fadeIn 0.5s; }
         .summary-label { padding: 25px; border-radius: 20px; font-size: 1.1rem; font-weight: bold; margin-top: 15px; line-height: 1.6; }
-        .bg-safe { background-color: var(--safe-color); color: #004d00; }
+        .bg-safe { background-color: var(--safe-color); color: var(--dark-green); }
         .bg-danger { background-color: var(--danger-color); color: #fff; }
 
-        .footer-credit { padding: 20px; text-align: center; background: #f9f9f9; border-top: 1px solid #eee; font-size: 14px; }
-        .fb-link { color: #1877F2; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 8px; }
+        /* History Table */
+        .history-section { padding: 20px; background: #fff; border-top: 8px solid #f0f0f0; }
+        .history-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        .history-table th, .history-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+        .btn-action { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; margin-right: 4px; }
+        .btn-pdf { background: #ffeded; color: #dc3545; }
+        .btn-del { background: #f8f9fa; color: #6c757d; }
+
+        .footer-credit { padding: 25px; text-align: center; background: #f9f9f9; border-top: 1px solid #eee; font-size: 14px; line-height: 1.6; }
+        .fb-link { color: #1877F2; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 10px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -99,69 +108,83 @@
     <header>
         <img src="logo.jpg" alt="Logo" class="top-logo">
         <h2 style="margin:0;">แบบประเมินความปวด</h2>
-        <input type="text" id="userName" placeholder="ชื่อ-นามสกุล ผู้ป่วย" class="name-input">
+        <input type="text" id="userName" placeholder="ระบุชื่อ-นามสกุล ผู้ป่วย" class="name-input">
     </header>
 
     <form id="painForm">
         <div class="question-card">
-            <div class="img-container"><img src="1.jpg"></div>
+            <div class="img-container"><img src="1.jpg" alt="Pain Score"></div>
             <label>1. คะแนนปวดโดยเฉลี่ย (0-10):</label>
-            <div class="pain-scale-buttons">
-                <script>
-                    for(let i=0; i<=10; i++) {
-                        document.write(`<button type="button" class="pain-btn" onclick="setPainScore(${i}, this)">${i}</button>`);
-                    }
-                </script>
-            </div>
+            <div class="pain-scale-buttons" id="painButtons">
+                </div>
             <input type="hidden" id="q1_value" value="">
         </div>
 
-        <script>
-            const questions = [
-                "การทำกิจกรรมใน 3 วันที่ผ่านมา",
-                "การรับประทานยาแก้ปวดระหว่างมื้อ",
-                "จำนวนครั้งที่มาโรงพยาบาล/โทรปรึกษา",
-                "อาการตื่นกลางดึกเพราะปวด",
-                "สภาพอารมณ์ใน 3 วันที่ผ่านมา",
-                "อาการข้างเคียงหลังกินยา"
-            ];
-            questions.forEach((q, index) => {
-                let qNum = index + 2;
-                document.write(`
-                    <div class="question-card">
-                        <div class="img-container"><img src="${qNum}.jpg"></div>
-                        <label>${qNum}. ${q}:</label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="q${qNum}" value="0"> 0 คะแนน</label>
-                            <label><input type="radio" name="q${qNum}" value="1"> 1 คะแนน</label>
-                            <label><input type="radio" name="q${qNum}" value="2"> 2 คะแนน</label>
-                            <label><input type="radio" name="q${qNum}" value="3"> 3 คะแนน</label>
-                        </div>
-                    </div>
-                `);
-            });
-        </script>
+        <div id="dynamicQuestions"></div>
 
         <button type="button" class="btn-submit" onclick="processResult()">ประมวลผลการจัดการตนเอง</button>
     </form>
 
     <div id="resultBox" class="result-section">
-        <div class="img-container"><img src="8.jpg"></div>
+        <div class="img-container"><img src="8.jpg" alt="Result"></div>
         <div id="summaryLabel" class="summary-label"></div>
+        <button type="button" class="btn-submit" style="background:#007bff; margin-top:15px;" onclick="downloadLastPDF()">📥 ดาวน์โหลดรายงาน PDF</button>
+    </div>
+
+    <div class="history-section">
+        <h3 style="margin-top:0; color:var(--primary-color);">📊 ประวัติการบันทึก</h3>
+        <div style="overflow-x:auto;">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>วันที่/เวลา</th>
+                        <th>คะแนน</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
     </div>
 
     <footer class="footer-credit">
-        <strong>จัดทำโดย: พว.นิภัสสรณ์ บุญญา (รพ.ชลบุรี)</strong><br>
-        <a href="https://www.facebook.com/people/CBH-Pain-clinic/61572659957823/" target="_blank" class="fb-link">🔵 CBH Pain clinic</a>
+        <strong>พัฒนาโดย: พว.นิภัสสรณ์ บุญญา (รพ.ชลบุรี)</strong><br>
+        <small> พว.วิษณุกรณ์ โอยา (รพ.ชลบุรี)</small><br>
+        <a href="https://www.facebook.com/people/CBH-Pain-clinic/61572659957823/" target="_blank" class="fb-link">🔵 ติดต่อ Facebook: CBH Pain clinic</a>
     </footer>
 </div>
 
 <script>
-    // Service Worker Registration
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').then(() => console.log('PWA Ready'));
+    // 1. Initial Render
+    const painBtnContainer = document.getElementById('painButtons');
+    for(let i=0; i<=10; i++) {
+        painBtnContainer.innerHTML += `<button type="button" class="pain-btn" onclick="setPainScore(${i}, this)">${i}</button>`;
     }
 
+    const questionTexts = [
+        "การทำกิจกรรมใน 3 วันที่ผ่านมา",
+        "การรับประทานยาแก้ปวดระหว่างมื้อ",
+        "จำนวนครั้งที่มาโรงพยาบาล/โทรปรึกษา",
+        "อาการตื่นกลางดึกเพราะปวด",
+        "สภาพอารมณ์ใน 3 วันที่ผ่านมา",
+        "อาการข้างเคียงหลังกินยา"
+    ];
+    const dynQ = document.getElementById('dynamicQuestions');
+    questionTexts.forEach((q, index) => {
+        let qNum = index + 2;
+        dynQ.innerHTML += `
+            <div class="question-card">
+                <div class="img-container"><img src="${qNum}.jpg"></div>
+                <label>${qNum}. ${q}:</label>
+                <div class="radio-group">
+                    ${[0,1,2,3].map(v => `<label><input type="radio" name="q${qNum}" value="${v}"> ${v} คะแนน</label>`).join('')}
+                </div>
+            </div>`;
+    });
+
+    document.addEventListener('DOMContentLoaded', loadHistory);
+
+    // 2. Logic Functions
     function setPainScore(score, btn) {
         document.getElementById('q1_value').value = score;
         document.querySelectorAll('.pain-btn').forEach(b => b.classList.remove('active'));
@@ -169,32 +192,105 @@
     }
 
     function processResult() {
-        const name = document.getElementById('userName').value.trim() || "ผู้ป่วย";
+        const name = document.getElementById('userName').value.trim() || "ผู้ป่วยทั่วไป";
         let score = 0;
-
         const q1 = document.getElementById('q1_value').value;
-        if(q1 === "") { alert("กรุณาเลือกคะแนนความปวดข้อ 1"); return; }
+        if(q1 === "") { alert("กรุณาเลือกคะแนนความปวดข้อ 1 ครับ"); return; }
         score += parseInt(q1);
 
         for (let i = 2; i <= 7; i++) {
             const sel = document.querySelector(`input[name="q${i}"]:checked`);
-            if (!sel) { alert(`กรุณาตอบข้อ ${i} ให้ครบครับ`); return; }
+            if (!sel) { alert(`กรุณาประเมินข้อ ${i} ให้ครบถ้วนครับ`); return; }
             score += parseInt(sel.value);
         }
 
+        const date = new Date().toLocaleString('th-TH');
+        const advice = score <= 15 ? "ท่านไม่ต้องปรับการกินยาแก้ปวด" : "ท่านต้องปรับการกินยาแก้ปวด (โทร 098-3261994)";
+        
+        // Save to LocalStorage (Create)
+        const record = { id: Date.now(), name, score, date, advice };
+        let history = JSON.parse(localStorage.getItem('pain_history') || '[]');
+        history.unshift(record);
+        localStorage.setItem('pain_history', JSON.stringify(history));
+
+        // UI Update
         const resBox = document.getElementById('resultBox');
         const label = document.getElementById('summaryLabel');
         resBox.style.display = 'block';
-        label.classList.remove('bg-safe', 'bg-danger');
-
-        if (score <= 15) {
-            label.classList.add('bg-safe');
-            label.innerHTML = `คุณ ${name}<br>คะแนน: ${score}<br>✅ ท่านไม่ต้องปรับการกินยาแก้ปวด`;
-        } else {
-            label.classList.add('bg-danger');
-            label.innerHTML = `คุณ ${name}<br>คะแนน: ${score}<br>⚠️ ท่านต้องปรับการกินยาแก้ปวด<br>📞 โทร: <a href="tel:0983261994" style="color:white">098-3261994</a>`;
-        }
+        label.className = 'summary-label ' + (score <= 15 ? 'bg-safe' : 'bg-danger');
+        label.innerHTML = `คุณ ${name}<br>คะแนนรวม: ${score} คะแนน<br>${score <= 15 ? '✅' : '⚠️'} ${advice}`;
+        
         resBox.scrollIntoView({ behavior: 'smooth' });
+        loadHistory();
+    }
+
+    function loadHistory() {
+        const history = JSON.parse(localStorage.getItem('pain_history') || '[]');
+        document.getElementById('historyBody').innerHTML = history.map(item => `
+            <tr>
+                <td><small>${item.date}</small></td>
+                <td><strong>${item.score}</strong></td>
+                <td>
+                    <button class="btn-action btn-pdf" onclick="generatePDF(${item.id})">PDF</button>
+                    <button class="btn-action btn-del" onclick="deleteHistory(${item.id})">ลบ</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function deleteHistory(id) {
+        if(confirm('ต้องการลบประวัตินี้ใช่หรือไม่?')) {
+            let history = JSON.parse(localStorage.getItem('pain_history') || '[]');
+            localStorage.setItem('pain_history', JSON.stringify(history.filter(i => i.id !== id)));
+            loadHistory();
+        }
+    }
+
+    // 3. Advanced PDF Generation (Thai Support via Image)
+    async function generatePDF(id) {
+        const history = JSON.parse(localStorage.getItem('pain_history') || '[]');
+        const data = history.find(item => item.id === id);
+        if(!data) return;
+
+        const reportDiv = document.createElement('div');
+        reportDiv.style = "width:500px; padding:40px; background:white; font-family:'Sarabun',sans-serif; color:black;";
+        reportDiv.innerHTML = `
+            <div style="text-align:center; border-bottom:3px solid #007bff; padding-bottom:20px;">
+                <img src="logo.jpg" style="width:70px;">
+                <h2 style="color:#007bff; margin:10px 0;">รายงานผลการประเมินความปวด</h2>
+                <p>ศูนย์จัดการความปวด โรงพยาบาลชลบุรี</p>
+            </div>
+            <div style="padding:30px 0; line-height:1.8;">
+                <p><strong>ชื่อผู้ป่วย:</strong> ${data.name}</p>
+                <p><strong>วันที่ประเมิน:</strong> ${data.date}</p>
+                <div style="margin:20px 0; padding:20px; background:#f8f9fa; border-radius:15px; text-align:center;">
+                    <h1 style="margin:0; color:${data.score > 15 ? '#ff4d4d' : '#28a745'}">${data.score} คะแนน</h1>
+                </div>
+                <p><strong>สรุปผล:</strong> ${data.advice}</p>
+            </div>
+            <div style="margin-top:40px; text-align:right; font-size:14px; color:#666;">
+                <p>ผู้ออกรายงาน: พว.นิภัสสรณ์ บุญญา (รพ.ชลบุรี)</p>
+                <p>OYADATA Pain Assessment Tool</p>
+            </div>`;
+        
+        document.body.appendChild(reportDiv);
+        const canvas = await html2canvas(reportDiv, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        pdf.addImage(imgData, 'PNG', 10, 10, 190, 0);
+        pdf.save(`PainReport_${data.name}.pdf`);
+        document.body.removeChild(reportDiv);
+    }
+
+    function downloadLastPDF() {
+        const history = JSON.parse(localStorage.getItem('pain_history') || '[]');
+        if(history.length > 0) generatePDF(history[0].id);
+    }
+
+    // PWA Service Worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').then(() => console.log('PWA Active'));
     }
 </script>
 
