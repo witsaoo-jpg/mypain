@@ -57,7 +57,6 @@
         .question-card label { font-weight: bold; display: block; margin-bottom: 12px; color: #333; }
         .img-container img { width: 100%; border-radius: 12px; margin-bottom: 15px; display: block; }
 
-        /* Pain Scale Buttons 1-10 */
         .pain-scale-buttons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
         .pain-btn {
             width: 42px; height: 42px; border: 2px solid var(--primary-color);
@@ -66,7 +65,6 @@
         }
         .pain-btn.active { background: var(--primary-color); color: white; transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,123,255,0.3); }
 
-        /* Radio Buttons */
         .radio-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .radio-group label { 
             background: #f8f9fa; padding: 14px; border-radius: 12px; border: 1px solid #ddd; 
@@ -88,7 +86,6 @@
         .bg-safe { background-color: var(--safe-color); color: var(--dark-green); }
         .bg-danger { background-color: var(--danger-color); color: #fff; }
 
-        /* History Table */
         .history-section { padding: 20px; background: #fff; border-top: 8px solid #f0f0f0; }
         .history-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
         .history-table th, .history-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
@@ -115,13 +112,10 @@
         <div class="question-card">
             <div class="img-container"><img src="1.jpg" alt="Pain Score"></div>
             <label>1. คะแนนปวดโดยเฉลี่ย (0-10):</label>
-            <div class="pain-scale-buttons" id="painButtons">
-                </div>
+            <div class="pain-scale-buttons" id="painButtons"></div>
             <input type="hidden" id="q1_value" value="">
         </div>
-
         <div id="dynamicQuestions"></div>
-
         <button type="button" class="btn-submit" onclick="processResult()">ประมวลผลการจัดการตนเอง</button>
     </form>
 
@@ -148,34 +142,35 @@
     </div>
 
     <footer class="footer-credit">
-        <strong>พัฒนาโดย: พว.นิภัสสรณ์ บุญญา (รพ.ชลบุรี)</strong><br>
-        <small> พว.วิษณุกรณ์ โอยา (รพ.ชลบุรี)</small><br>
+        <strong>จัดทำโดย: พว.นิภัสสรณ์ บุญญา (รพ.ชลบุรี)</strong><br>
+        <small> พว.วิษณุกรณ์ โอยา(รพ.ชลบุรี)</small><br>
         <a href="https://www.facebook.com/people/CBH-Pain-clinic/61572659957823/" target="_blank" class="fb-link">🔵 ติดต่อ Facebook: CBH Pain clinic</a>
     </footer>
 </div>
 
 <script>
-    // 1. Initial Render
+    const questionTexts = [
+        "1. คะแนนปวดโดยเฉลี่ย",
+        "2. การทำกิจกรรมใน 3 วันที่ผ่านมา",
+        "3. การรับประทานยาแก้ปวดระหว่างมื้อ",
+        "4. จำนวนครั้งที่มาโรงพยาบาล/โทรปรึกษา",
+        "5. อาการตื่นกลางดึกเพราะปวด",
+        "6. สภาพอารมณ์ใน 3 วันที่ผ่านมา",
+        "7. อาการข้างเคียงหลังกินยา"
+    ];
+
     const painBtnContainer = document.getElementById('painButtons');
     for(let i=0; i<=10; i++) {
         painBtnContainer.innerHTML += `<button type="button" class="pain-btn" onclick="setPainScore(${i}, this)">${i}</button>`;
     }
 
-    const questionTexts = [
-        "การทำกิจกรรมใน 3 วันที่ผ่านมา",
-        "การรับประทานยาแก้ปวดระหว่างมื้อ",
-        "จำนวนครั้งที่มาโรงพยาบาล/โทรปรึกษา",
-        "อาการตื่นกลางดึกเพราะปวด",
-        "สภาพอารมณ์ใน 3 วันที่ผ่านมา",
-        "อาการข้างเคียงหลังกินยา"
-    ];
     const dynQ = document.getElementById('dynamicQuestions');
-    questionTexts.forEach((q, index) => {
+    questionTexts.slice(1).forEach((q, index) => {
         let qNum = index + 2;
         dynQ.innerHTML += `
             <div class="question-card">
                 <div class="img-container"><img src="${qNum}.jpg"></div>
-                <label>${qNum}. ${q}:</label>
+                <label>${q}</label>
                 <div class="radio-group">
                     ${[0,1,2,3].map(v => `<label><input type="radio" name="q${qNum}" value="${v}"> ${v} คะแนน</label>`).join('')}
                 </div>
@@ -184,7 +179,6 @@
 
     document.addEventListener('DOMContentLoaded', loadHistory);
 
-    // 2. Logic Functions
     function setPainScore(score, btn) {
         document.getElementById('q1_value').value = score;
         document.querySelectorAll('.pain-btn').forEach(b => b.classList.remove('active'));
@@ -194,26 +188,29 @@
     function processResult() {
         const name = document.getElementById('userName').value.trim() || "ผู้ป่วยทั่วไป";
         let score = 0;
+        let answersArray = [];
+
         const q1 = document.getElementById('q1_value').value;
         if(q1 === "") { alert("กรุณาเลือกคะแนนความปวดข้อ 1 ครับ"); return; }
         score += parseInt(q1);
+        answersArray.push(parseInt(q1)); // เก็บคำตอบข้อ 1
 
         for (let i = 2; i <= 7; i++) {
             const sel = document.querySelector(`input[name="q${i}"]:checked`);
             if (!sel) { alert(`กรุณาประเมินข้อ ${i} ให้ครบถ้วนครับ`); return; }
             score += parseInt(sel.value);
+            answersArray.push(parseInt(sel.value)); // เก็บคำตอบข้อ 2-7
         }
 
         const date = new Date().toLocaleString('th-TH');
         const advice = score <= 15 ? "ท่านไม่ต้องปรับการกินยาแก้ปวด" : "ท่านต้องปรับการกินยาแก้ปวด (โทร 098-3261994)";
         
-        // Save to LocalStorage (Create)
-        const record = { id: Date.now(), name, score, date, advice };
+        // บันทึกคำตอบรายข้อลงไปด้วย
+        const record = { id: Date.now(), name, score, date, advice, answers: answersArray };
         let history = JSON.parse(localStorage.getItem('pain_history') || '[]');
         history.unshift(record);
         localStorage.setItem('pain_history', JSON.stringify(history));
 
-        // UI Update
         const resBox = document.getElementById('resultBox');
         const label = document.getElementById('summaryLabel');
         resBox.style.display = 'block';
@@ -246,40 +243,76 @@
         }
     }
 
-    // 3. Advanced PDF Generation (Thai Support via Image)
     async function generatePDF(id) {
         const history = JSON.parse(localStorage.getItem('pain_history') || '[]');
         const data = history.find(item => item.id === id);
         if(!data) return;
 
+        // สร้างตารางคะแนนรายข้อ
+        let answersTable = '';
+        if(data.answers && data.answers.length === 7) {
+            answersTable = `
+            <table style="width:100%; border-collapse:collapse; margin:20px 0; font-size:14px; text-align:left;">
+                <tr style="background-color:#f0f0f0;">
+                    <th style="padding:10px; border:1px solid #ccc;">หัวข้อการประเมิน</th>
+                    <th style="padding:10px; border:1px solid #ccc; text-align:center; width:80px;">คะแนน</th>
+                </tr>`;
+            
+            data.answers.forEach((ans, idx) => {
+                answersTable += `
+                <tr>
+                    <td style="padding:10px; border:1px solid #ccc;">${questionTexts[idx]}</td>
+                    <td style="padding:10px; border:1px solid #ccc; text-align:center; font-weight:bold;">${ans}</td>
+                </tr>`;
+            });
+            answersTable += `</table>`;
+        } else {
+            answersTable = `<p style="color:#ff4d4d; font-size:14px;">(ไม่มีข้อมูลรายข้อสำหรับบันทึกนี้ - อาจเป็นข้อมูลเก่าก่อนอัปเดตระบบ)</p>`;
+        }
+
         const reportDiv = document.createElement('div');
-        reportDiv.style = "width:500px; padding:40px; background:white; font-family:'Sarabun',sans-serif; color:black;";
+        reportDiv.style = "width:600px; padding:40px; background:white; font-family:'Sarabun',sans-serif; color:black; position:fixed; top:-9999px; left:-9999px;";
+        
         reportDiv.innerHTML = `
-            <div style="text-align:center; border-bottom:3px solid #007bff; padding-bottom:20px;">
+            <div style="text-align:center; border-bottom:3px solid #007bff; padding-bottom:15px; margin-bottom:20px;">
                 <img src="logo.jpg" style="width:70px;">
                 <h2 style="color:#007bff; margin:10px 0;">รายงานผลการประเมินความปวด</h2>
-                <p>ศูนย์จัดการความปวด โรงพยาบาลชลบุรี</p>
+                <p style="margin:0;">ศูนย์จัดการความปวด โรงพยาบาลชลบุรี</p>
             </div>
-            <div style="padding:30px 0; line-height:1.8;">
+            
+            <div style="line-height:1.6;">
                 <p><strong>ชื่อผู้ป่วย:</strong> ${data.name}</p>
                 <p><strong>วันที่ประเมิน:</strong> ${data.date}</p>
-                <div style="margin:20px 0; padding:20px; background:#f8f9fa; border-radius:15px; text-align:center;">
-                    <h1 style="margin:0; color:${data.score > 15 ? '#ff4d4d' : '#28a745'}">${data.score} คะแนน</h1>
+                
+                ${answersTable}
+
+                <div style="margin:20px 0; padding:15px; background:${data.score > 15 ? '#ffe6e6' : '#e6ffe6'}; border-radius:10px; text-align:center; border: 2px solid ${data.score > 15 ? '#ff4d4d' : '#28a745'};">
+                    <h2 style="margin:0; color:${data.score > 15 ? '#cc0000' : '#006600'};">คะแนนรวมทั้งหมด: ${data.score} คะแนน</h2>
+                    <p style="margin:10px 0 0 0; font-weight:bold; font-size:16px;">สรุปผล: ${data.advice}</p>
                 </div>
-                <p><strong>สรุปผล:</strong> ${data.advice}</p>
             </div>
-            <div style="margin-top:40px; text-align:right; font-size:14px; color:#666;">
-                <p>ผู้ออกรายงาน: พว.นิภัสสรณ์ บุญญา (รพ.ชลบุรี)</p>
-                <p>OYADATA Pain Assessment Tool</p>
+            
+            <div style="margin-top:30px; text-align:right; font-size:13px; color:#555; border-top:1px dashed #ccc; padding-top:10px;">
+                <p style="margin:5px 0;">ผู้ออกรายงาน: พว.นิภัสสรณ์ บุญญา (รพ.ชลบุรี)</p>
+                <p style="margin:5px 0;">ระบบประเมิน: OYADATA Pain Assessment Tool</p>
             </div>`;
         
         document.body.appendChild(reportDiv);
-        const canvas = await html2canvas(reportDiv, { scale: 2 });
+        
+        // กำหนด font-family ลงใน HTML ตรงๆ ก่อนจับภาพ เผื่อบางเบราว์เซอร์ไม่เรนเดอร์ทัน
+        await document.fonts.ready; 
+        
+        const canvas = await html2canvas(reportDiv, { scale: 2, useCORS: true });
         const imgData = canvas.toDataURL('image/png');
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
-        pdf.addImage(imgData, 'PNG', 10, 10, 190, 0);
-        pdf.save(`PainReport_${data.name}.pdf`);
+        
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Pain_Report_${data.name}.pdf`);
+        
         document.body.removeChild(reportDiv);
     }
 
@@ -288,9 +321,8 @@
         if(history.length > 0) generatePDF(history[0].id);
     }
 
-    // PWA Service Worker
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').then(() => console.log('PWA Active'));
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('PWA SW Error', err));
     }
 </script>
 
